@@ -67,15 +67,15 @@ class _VerificationNeighborScreenState
   @override
   Widget build(BuildContext context) {
     return VStepScaffold(
-      title: 'Neighbor Check',
+      title: 'Neighbour Check',
       onNext: _next,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          VLabeledField(label: '1st Neighbor Name & Address', controller: _n1Ctrl),
-          VLabeledField(label: '2nd Neighbor Name & Address', controller: _n2Ctrl),
+          VLabeledField(label: '1st Neighbour Name & Address', controller: _n1Ctrl),
+          VLabeledField(label: '2nd Neighbour Name & Address', controller: _n2Ctrl),
           VOptionGroup(
-            label: 'Details shared by neighbors about applicant',
+            label: 'Details shared by neighbours about applicant',
             options: const ['Confirmed', 'Not confirmed'],
             value: _confirmedChoice,
             onChanged: (v) => setState(() => _confirmedChoice = v),

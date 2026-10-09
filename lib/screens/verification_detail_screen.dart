@@ -103,12 +103,12 @@ class VerificationDetailScreen extends StatelessWidget {
                 c.neighbor2.isNotEmpty ||
                 c.neighborConfirmed != null)
               _Section(
-                title: 'Neighbor Check',
+                title: 'Neighbour Check',
                 icon: Icons.people_alt_outlined,
                 entries: [
-                  ('1st Neighbor', c.neighbor1),
-                  ('2nd Neighbor', c.neighbor2),
-                  ('Neighbors Confirmed', _yesNo(c.neighborConfirmed)),
+                  ('1st Neighbour', c.neighbor1),
+                  ('2nd Neighbour', c.neighbor2),
+                  ('Neighbours Confirmed', _yesNo(c.neighborConfirmed)),
                 ],
               ),
             if (c.metPersonName.isNotEmpty ||

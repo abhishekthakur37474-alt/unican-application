@@ -28,12 +28,12 @@ class VerificationCase {
   String lastLocation = '';
   String untracedComments = '';
 
-  // ---- Branch B: Traced — neighbor step ----
+  // ---- Branch B: Traced — neighbour step ----
   String neighbor1 = '';
   String neighbor2 = '';
   bool? neighborConfirmed; // true = confirmed, false = not confirmed
 
-  // ---- Branch B1: Neighbor confirmed ----
+  // ---- Branch B1: Neighbour confirmed ----
   String metPersonName = '';
   String relationWithApplicant = '';
   String residenceConfirmation = '';
@@ -52,7 +52,7 @@ class VerificationCase {
   String verifierComments = '';
   bool? applicantResidingThere;
 
-  // ---- Branch B2: Neighbor not confirmed ----
+  // ---- Branch B2: Neighbour not confirmed ----
   String whoIsThat = '';
   String residenceConfirmationB2 = '';
   String totalFloorsB2 = '';
@@ -287,8 +287,8 @@ class VerificationCase {
         }
         add('Verifier Comments', verifierComments);
       }
-      add('1st Neighbor', neighbor1);
-      add('2nd Neighbor', neighbor2);
+      add('1st Neighbour', neighbor1);
+      add('2nd Neighbour', neighbor2);
     }
     add('Geo Tag', geoTagText);
     return items;
@@ -305,7 +305,7 @@ class VerificationCase {
         'area approx. $landArea in $localityOfAddress locality. Document '
         'shown by met person: $documentShown. Total family members: '
         '$totalFamilyMembers, of which $numberOfEarners are earners.\n\n'
-        'Neighbor confirmation: We met with $neighbor1 and $neighbor2, both '
+        'Neighbour confirmation: We met with $neighbor1 and $neighbor2, both '
         'confirmed the applicant\'s name and residence.$_mediaSuffix';
   }
 
@@ -315,7 +315,7 @@ class VerificationCase {
         '$residenceConfirmationB2. Building is built from $totalFloorsB2 '
         'and premises exist at $addressFloorB2 with an area approx. '
         '$landAreaB2 in $localityB2 locality.\n\n'
-        'Neighbor confirmation: We met with $neighbor1 and $neighbor2, both '
+        'Neighbour confirmation: We met with $neighbor1 and $neighbor2, both '
         'stated they could not confirm the applicant regarding the address.$_mediaSuffix';
   }
 
