@@ -2,10 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../models/assigned_address.dart';
-import '../models/verification_case.dart';
 import '../services/database_service.dart';
 import '../services/sync_service.dart';
-import '../services/verification_store.dart';
 import '../widgets/assigned_address_card.dart';
 import 'assigned_address_detail_screen.dart';
 import 'assigned_addresses_screen.dart';
@@ -35,7 +33,8 @@ class HomeTab extends StatelessWidget {
             : StreamBuilder<List<AssignedAddress>>(
                 stream: db.watchAssignedAddresses(uid),
                 builder: (context, snapshot) {
-                  final items = snapshot.data ?? const <AssignedAddress>[];
+                  final all = snapshot.data ?? const <AssignedAddress>[];
+                  final items = all.where((e) => e.isOpen).toList();
                   final waiting =
                       snapshot.connectionState == ConnectionState.waiting &&
                           !snapshot.hasData;
@@ -44,12 +43,9 @@ class HomeTab extends StatelessWidget {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ValueListenableBuilder<List<VerificationCase>>(
-                        valueListenable: VerificationStore.instance.cases,
-                        builder: (context, cases, child) => _StatsRow(
-                          assigned: items.length,
-                          completed: cases.length,
-                        ),
+                      _StatsRow(
+                        received: all.length,
+                        pending: items.length,
                       ),
                       ValueListenableBuilder<int>(
                         valueListenable: SyncService.instance.pendingCount,
@@ -121,10 +117,10 @@ class HomeTab extends StatelessWidget {
 }
 
 class _StatsRow extends StatelessWidget {
-  final int assigned;
-  final int completed;
+  final int received;
+  final int pending;
 
-  const _StatsRow({required this.assigned, required this.completed});
+  const _StatsRow({required this.received, required this.pending});
 
   @override
   Widget build(BuildContext context) {
@@ -134,17 +130,17 @@ class _StatsRow extends StatelessWidget {
           child: _StatCard(
             icon: Icons.assignment_outlined,
             label: 'Received',
-            count: assigned,
+            count: received,
             color: Theme.of(context).colorScheme.primary,
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: _StatCard(
-            icon: Icons.task_alt_rounded,
-            label: 'Completed',
-            count: completed,
-            color: Colors.green,
+            icon: Icons.pending_actions_rounded,
+            label: 'Pending',
+            count: pending,
+            color: Colors.orange,
           ),
         ),
       ],

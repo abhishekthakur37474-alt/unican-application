@@ -24,7 +24,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
     ),
     (
       'Permissions',
-      'Camera, photo and location permissions are used only while you are '
+      'Camera and location permissions are used only while you are '
           'capturing verification evidence. You can revoke them any time from '
           'your device settings.',
     ),

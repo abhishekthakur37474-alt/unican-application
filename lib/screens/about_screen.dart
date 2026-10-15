@@ -52,7 +52,7 @@ class AboutScreen extends StatelessWidget {
               _AboutRow(
                 icon: Icons.photo_camera_outlined,
                 title: 'Photo evidence',
-                subtitle: 'Attach camera or gallery photos to each case.',
+                subtitle: 'Capture camera photos for each case.',
               ),
             ],
           ),

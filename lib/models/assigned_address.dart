@@ -17,6 +17,7 @@ class AssignedAddress {
   final String verificationType;
   final DateTime? assignedAt;
   final DateTime? createdAt;
+  final DateTime? closedAt;
 
   AssignedAddress({
     required this.id,
@@ -37,6 +38,7 @@ class AssignedAddress {
     required this.verificationType,
     this.assignedAt,
     this.createdAt,
+    this.closedAt,
   });
 
   factory AssignedAddress.fromMap(String id, Map<String, dynamic> map) {
@@ -59,6 +61,7 @@ class AssignedAddress {
       verificationType: _asString(map['verificationType']),
       assignedAt: _asDate(map['assignedAt']),
       createdAt: _asDate(map['createdAt']),
+      closedAt: _asDate(map['closed_at']) ?? _asDate(map['closedAt']),
     );
   }
 
@@ -76,10 +79,17 @@ class AssignedAddress {
     return text;
   }
 
-  bool get isOpen {
-    final value = status.toLowerCase();
-    return value != 'completed' && value != 'done';
+  bool get isClosed {
+    if (closedAt != null) return true;
+    final value = status.toLowerCase().trim();
+    return value == 'closed' ||
+        value == 'completed' ||
+        value == 'done' ||
+        value == 'cancelled' ||
+        value == 'canceled';
   }
+
+  bool get isOpen => !isClosed;
 }
 
 String _asString(dynamic value) => value?.toString() ?? '';

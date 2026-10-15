@@ -9,18 +9,11 @@ class MediaService {
   Future<XFile?> capturePhoto() async {
     if (!Platform.isAndroid) return null;
     if (!await _permissions.requestCamera()) return null;
-    return _picker.pickImage(source: ImageSource.camera, imageQuality: 85);
-  }
-
-  Future<XFile?> pickPhoto() async {
-    if (!Platform.isAndroid) return null;
-    if (!await _permissions.requestPhotos()) return null;
-    return _picker.pickImage(source: ImageSource.gallery, imageQuality: 85);
-  }
-
-  Future<List<XFile>> pickPhotos() async {
-    if (!Platform.isAndroid) return <XFile>[];
-    if (!await _permissions.requestPhotos()) return <XFile>[];
-    return _picker.pickMultiImage(imageQuality: 85);
+    return _picker.pickImage(
+      source: ImageSource.camera,
+      preferredCameraDevice: CameraDevice.rear,
+      imageQuality: 85,
+      requestFullMetadata: false,
+    );
   }
 }

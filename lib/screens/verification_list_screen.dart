@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/verification_case.dart';
 import '../services/verification_store.dart';
-import '../verification/verification_final_screen.dart';
 import '../widgets/app_top_bar.dart';
 import '../widgets/verification_list_tile.dart';
 
@@ -68,18 +67,7 @@ class VerificationListScreen extends StatelessWidget {
               separatorBuilder: (_, _) => const SizedBox(height: 10),
               itemBuilder: (context, index) {
                 final item = items[index];
-                return VerificationListTile(
-                  item: item,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            VerificationFinalScreen(verificationCase: item),
-                      ),
-                    );
-                  },
-                );
+                return VerificationListTile(item: item);
               },
             );
           },

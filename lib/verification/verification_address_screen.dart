@@ -58,6 +58,17 @@ class _VerificationAddressScreenState
       _resumeStep = 1;
     }
 
+    if (assigned.isClosed) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('This case is closed')),
+        );
+        Navigator.pop(context);
+      });
+      return;
+    }
+
     if (_resumeStep > 1) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _resume());
     }

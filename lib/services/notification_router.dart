@@ -94,6 +94,8 @@ class NotificationRouter {
       } catch (_) {}
     }
 
+    if (assigned != null && assigned.isClosed) return;
+
     assigned ??= AssignedAddress(
       id: addressId,
       addressLine: '',

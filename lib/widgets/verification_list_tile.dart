@@ -5,12 +5,12 @@ import '../services/verification_store.dart';
 
 class VerificationListTile extends StatelessWidget {
   final VerificationCase item;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   const VerificationListTile({
     super.key,
     required this.item,
-    required this.onTap,
+    this.onTap,
   });
 
   @override

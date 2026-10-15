@@ -4,15 +4,51 @@ import '../models/verification_case.dart';
 import '../services/verification_store.dart';
 import 'verification_done_screen.dart';
 
-class VerificationFinalScreen extends StatelessWidget {
+class VerificationFinalScreen extends StatefulWidget {
   final VerificationCase verificationCase;
+  final bool isReview;
 
-  const VerificationFinalScreen({super.key, required this.verificationCase});
+  const VerificationFinalScreen({
+    super.key,
+    required this.verificationCase,
+    this.isReview = false,
+  });
+
+  @override
+  State<VerificationFinalScreen> createState() => _VerificationFinalScreenState();
+}
+
+class _VerificationFinalScreenState extends State<VerificationFinalScreen> {
+  bool _submitting = false;
+
+  Future<void> _onDone() async {
+    if (_submitting) return;
+    final c = widget.verificationCase;
+
+    if (widget.isReview) {
+      Navigator.pop(context);
+      return;
+    }
+
+    setState(() => _submitting = true);
+    try {
+      await VerificationStore.instance.save(c);
+      if (!mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (_) => VerificationDoneScreen(verificationCase: c),
+        ),
+        (route) => route.settings.name == '/home' || route.isFirst,
+      );
+    } catch (_) {
+      if (mounted) setState(() => _submitting = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final c = verificationCase;
+    final c = widget.verificationCase;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Verification Complete')),
@@ -149,28 +185,20 @@ class VerificationFinalScreen extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
-                  onPressed: () async {
-                    final alreadySaved = VerificationStore.instance.cases.value
-                        .any((e) => e.id == c.id);
-                    await VerificationStore.instance.save(c);
-                    if (!context.mounted) return;
-                    if (alreadySaved) {
-                      Navigator.pop(context);
-                    } else {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => VerificationDoneScreen(
-                            verificationCase: c,
-                          ),
-                        ),
-                      );
-                    }
-                  },
+                  onPressed: _submitting ? null : _onDone,
                   style: FilledButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
-                  child: const Text('Done'),
+                  child: _submitting
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text('Done'),
                 ),
               ),
             ],

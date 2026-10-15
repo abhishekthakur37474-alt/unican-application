@@ -183,7 +183,7 @@ class DatabaseService {
           child.key ?? '',
           Map<String, dynamic>.from(child.value as Map),
         );
-        if (item.assignedToStaffId == staffId && item.isOpen) {
+        if (item.assignedToStaffId == staffId) {
           items.add(item);
         }
       }

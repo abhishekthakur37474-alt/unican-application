@@ -39,6 +39,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       assigned = await _db.getAssignedAddressByCaseId(item.caseId);
     } catch (_) {}
 
+    if (assigned != null && assigned.isClosed) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('This case is closed')),
+      );
+      return;
+    }
+
     assigned ??= AssignedAddress(
       id: '',
       addressLine: item.address,

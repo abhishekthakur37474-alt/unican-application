@@ -5,7 +5,6 @@ import '../services/sync_service.dart';
 import '../services/verification_store.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_top_bar.dart';
-import 'verification_detail_screen.dart';
 
 /// Report screen: how many addresses this staff member has verified, a
 /// breakdown by result, and the full list of completed verifications.
@@ -236,17 +235,7 @@ class _VerificationCard extends StatelessWidget {
     return Material(
       color: theme.colorScheme.surfaceContainerHigh,
       borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => VerificationDetailScreen(verificationCase: item),
-            ),
-          );
-        },
-        child: Padding(
+      child: Padding(
           padding: const EdgeInsets.all(14),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -321,7 +310,6 @@ class _VerificationCard extends StatelessWidget {
             ],
           ),
         ),
-      ),
     );
   }
 }

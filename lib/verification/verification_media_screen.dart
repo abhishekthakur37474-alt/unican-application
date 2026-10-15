@@ -56,19 +56,14 @@ class _VerificationMediaScreenState extends State<VerificationMediaScreen> {
         (lng - group.longitude!).abs() < 0.00015;
   }
 
-  Future<void> _addPhoto({
-    required bool fromCamera,
-    int? groupIndex,
-  }) async {
+  Future<void> _addPhoto({int? groupIndex}) async {
     if (_attaching) return;
     setState(() {
       _attaching = true;
       _locationError = null;
     });
     try {
-      final file = fromCamera
-          ? await _mediaService.capturePhoto()
-          : await _mediaService.pickPhoto();
+      final file = await _mediaService.capturePhoto();
       if (file == null || !mounted) return;
 
       final position = await _locationService.getCurrentPosition();
@@ -290,28 +285,10 @@ class _VerificationMediaScreenState extends State<VerificationMediaScreen> {
                   ),
                 ),
                 const SizedBox(height: 14),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _ActionButton(
-                        icon: Icons.photo_camera_outlined,
-                        label: 'Camera',
-                        onTap: _attaching
-                            ? null
-                            : () => _addPhoto(fromCamera: true),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _ActionButton(
-                        icon: Icons.photo_library_outlined,
-                        label: 'Gallery',
-                        onTap: _attaching
-                            ? null
-                            : () => _addPhoto(fromCamera: false),
-                      ),
-                    ),
-                  ],
+                _ActionButton(
+                  icon: Icons.photo_camera_outlined,
+                  label: 'Camera',
+                  onTap: _attaching ? null : () => _addPhoto(),
                 ),
                 if (_attaching) ...[
                   const SizedBox(height: 14),
@@ -351,10 +328,7 @@ class _VerificationMediaScreenState extends State<VerificationMediaScreen> {
                 selected: _activeGroupIndex == i,
                 attaching: _attaching && _activeGroupIndex == i,
                 onSelect: () => setState(() => _activeGroupIndex = i),
-                onAddPhoto: () => _addPhoto(
-                  fromCamera: true,
-                  groupIndex: i,
-                ),
+                onAddPhoto: () => _addPhoto(groupIndex: i),
                 onRetry: () => _retryGroupLocation(i),
                 onRemovePhoto: (photoIndex) => _removePhoto(i, photoIndex),
                 onOpenPhoto: (photoIndex) => _openFullView(

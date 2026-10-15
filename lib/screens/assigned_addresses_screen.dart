@@ -48,7 +48,8 @@ class AssignedAddressesScreen extends StatelessWidget {
                     );
                   }
 
-                  final items = snapshot.data ?? [];
+                  final items =
+                      (snapshot.data ?? []).where((e) => e.isOpen).toList();
                   if (items.isEmpty) {
                     return const _EmptyState(
                       icon: Icons.location_off_outlined,
