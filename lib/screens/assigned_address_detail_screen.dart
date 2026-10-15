@@ -54,40 +54,42 @@ class AssignedAddressDetailScreen extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                 children: [
                   _SummaryCard(item: item),
-                  const SizedBox(height: 16),
-                  _InfoCard(
-                    title: 'Applicant',
-                    icon: Icons.badge_outlined,
-                    rows: [
-                      ('Name', item.applicantName),
-                      ('Phone', item.phone),
-                      ('Case ID', item.caseId),
-                      ('Client', item.clientName),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  _InfoCard(
-                    title: 'Address',
-                    icon: Icons.location_on_outlined,
-                    rows: [
-                      ('Address', item.addressLine),
-                      ('Landmark', item.landmark),
-                      ('City', item.city),
-                      ('State', item.state),
-                      ('Pincode', item.pincode),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  _InfoCard(
-                    title: 'Assignment',
-                    icon: Icons.assignment_outlined,
-                    rows: [
-                      ('Type', item.verificationType),
-                      ('Priority', item.priority),
-                      ('Assigned At', _formatDateTime(item.assignedAt)),
-                    ],
-                    status: item.status,
-                  ),
+                  // Applicant, Address and Assignment cards are hidden for now.
+                  // Their details are shown inside the summary card above.
+                  // const SizedBox(height: 16),
+                  // _InfoCard(
+                  //   title: 'Applicant',
+                  //   icon: Icons.badge_outlined,
+                  //   rows: [
+                  //     ('Name', item.applicantName),
+                  //     ('Phone', item.phone),
+                  //     ('Case ID', item.caseId),
+                  //     ('Client', item.clientName),
+                  //   ],
+                  // ),
+                  // const SizedBox(height: 12),
+                  // _InfoCard(
+                  //   title: 'Address',
+                  //   icon: Icons.location_on_outlined,
+                  //   rows: [
+                  //     ('Address', item.addressLine),
+                  //     ('Landmark', item.landmark),
+                  //     ('City', item.city),
+                  //     ('State', item.state),
+                  //     ('Pincode', item.pincode),
+                  //   ],
+                  // ),
+                  // const SizedBox(height: 12),
+                  // _InfoCard(
+                  //   title: 'Assignment',
+                  //   icon: Icons.assignment_outlined,
+                  //   rows: [
+                  //     ('Type', item.verificationType),
+                  //     ('Priority', item.priority),
+                  //     ('Assigned At', _formatDateTime(item.assignedAt)),
+                  //   ],
+                  //   status: item.status,
+                  // ),
                 ],
               ),
             ),
@@ -128,6 +130,14 @@ class _SummaryCard extends StatelessWidget {
     final theme = Theme.of(context);
     final name =
         item.applicantName.isEmpty ? item.caseId : item.applicantName;
+    final labelColor = theme.colorScheme.onPrimaryContainer;
+    final valueColor =
+        theme.colorScheme.onPrimaryContainer.withValues(alpha: 0.82);
+    final hasRows = item.phone.trim().isNotEmpty ||
+        item.caseId.trim().isNotEmpty ||
+        item.clientName.trim().isNotEmpty ||
+        item.verificationType.trim().isNotEmpty ||
+        item.status.trim().isNotEmpty;
 
     return Container(
       width: double.infinity,
@@ -136,57 +146,149 @@ class _SummaryCard extends StatelessWidget {
         color: theme.colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(16),
       ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surface.withValues(alpha: 0.7),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.home_work_outlined,
+                  color: theme.colorScheme.primary,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: labelColor,
+                      ),
+                    ),
+                    if (item.fullAddress.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        item.fullAddress,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: valueColor,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+          if (hasRows) ...[
+            const SizedBox(height: 16),
+            if (item.phone.trim().isNotEmpty)
+              _SummaryRow(
+                label: 'Phone',
+                value: item.phone,
+                labelColor: labelColor,
+                valueColor: valueColor,
+              ),
+            if (item.caseId.trim().isNotEmpty)
+              _SummaryRow(
+                label: 'Case ID',
+                value: item.caseId,
+                labelColor: labelColor,
+                valueColor: valueColor,
+              ),
+            if (item.clientName.trim().isNotEmpty)
+              _SummaryRow(
+                label: 'Client',
+                value: item.clientName,
+                labelColor: labelColor,
+                valueColor: valueColor,
+              ),
+            if (item.verificationType.trim().isNotEmpty)
+              _SummaryRow(
+                label: 'Type',
+                value: item.verificationType,
+                labelColor: labelColor,
+                valueColor: valueColor,
+              ),
+            if (item.status.trim().isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 108,
+                      child: Text(
+                        'Status',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: labelColor,
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    _StatusBadge(label: item.status),
+                  ],
+                ),
+              ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _SummaryRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color labelColor;
+  final Color valueColor;
+
+  const _SummaryRow({
+    required this.label,
+    required this.value,
+    required this.labelColor,
+    required this.valueColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surface.withValues(alpha: 0.7),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              Icons.home_work_outlined,
-              color: theme.colorScheme.primary,
-              size: 24,
+          SizedBox(
+            width: 108,
+            child: Text(
+              label,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: labelColor,
+              ),
             ),
           ),
-          const SizedBox(width: 14),
+          const SizedBox(width: 8),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: theme.colorScheme.onPrimaryContainer,
-                  ),
-                ),
-                if (item.fullAddress.isNotEmpty) ...[
-                  const SizedBox(height: 4),
-                  Text(
-                    item.fullAddress,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onPrimaryContainer
-                          .withValues(alpha: 0.82),
-                      height: 1.4,
-                    ),
-                  ),
-                ],
-                if (item.caseId.isNotEmpty) ...[
-                  const SizedBox(height: 10),
-                  Text(
-                    item.caseId,
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: theme.colorScheme.primary,
-                      letterSpacing: 0.2,
-                    ),
-                  ),
-                ],
-              ],
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: valueColor,
+                height: 1.35,
+              ),
             ),
           ),
         ],
@@ -195,6 +297,7 @@ class _SummaryCard extends StatelessWidget {
   }
 }
 
+/*
 class _InfoCard extends StatelessWidget {
   final String title;
   final IconData icon;
@@ -325,6 +428,7 @@ class _StatusRow extends StatelessWidget {
     );
   }
 }
+*/
 
 class _StatusBadge extends StatelessWidget {
   final String label;
@@ -352,6 +456,8 @@ class _StatusBadge extends StatelessWidget {
   }
 }
 
+/*
+
 class _RowDivider extends StatelessWidget {
   const _RowDivider();
 
@@ -378,3 +484,4 @@ String _formatDateTime(DateTime? value) {
   final m = value.minute.toString().padLeft(2, '0');
   return '${value.day} ${months[value.month - 1]} ${value.year}, $h:$m';
 }
+*/
