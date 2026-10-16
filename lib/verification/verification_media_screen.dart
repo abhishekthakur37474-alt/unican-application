@@ -1,9 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/verification_case.dart';
+import '../services/geocoding_service.dart';
 import '../services/location_service.dart';
 import '../services/media_service.dart';
 import '../services/verification_store.dart';
+import 'geotag/geotag_capture_screen.dart';
+import 'geotag/geotag_data.dart';
 import 'verification_widgets.dart';
 import 'verification_neighbor_screen.dart';
 import 'verification_untraced_screen.dart';
@@ -69,11 +72,37 @@ class _VerificationMediaScreenState extends State<VerificationMediaScreen> {
       final position = await _locationService.getCurrentPosition();
       if (!mounted) return;
 
+      String savedPath = file.path;
+      if (position != null) {
+        final geo = await GeocodingService.instance.reverseGeocode(
+          position.latitude,
+          position.longitude,
+        );
+        if (!mounted) return;
+
+        final composedPath = await Navigator.of(context).push<String>(
+          MaterialPageRoute(
+            builder: (_) => GeoTagCaptureScreen(
+              rawImagePath: file.path,
+              data: GeoTagData.fromLocation(
+                latitude: position.latitude,
+                longitude: position.longitude,
+                primaryLocation: geo?.primary,
+                detailedAddress: geo?.full,
+              ),
+            ),
+          ),
+        );
+        if (!mounted) return;
+        if (composedPath == null) return;
+        savedPath = composedPath;
+      }
+
       setState(() {
         if (groupIndex != null &&
             groupIndex >= 0 &&
             groupIndex < _case.geoGroups.length) {
-          _case.geoGroups[groupIndex].photoPaths.add(file.path);
+          _case.geoGroups[groupIndex].photoPaths.add(savedPath);
           if (!_case.geoGroups[groupIndex].hasGeoTag && position != null) {
             _case.geoGroups[groupIndex].latitude = position.latitude;
             _case.geoGroups[groupIndex].longitude = position.longitude;
@@ -84,21 +113,21 @@ class _VerificationMediaScreenState extends State<VerificationMediaScreen> {
             (g) => _sameLocation(position.latitude, position.longitude, g),
           );
           if (matchIndex >= 0) {
-            _case.geoGroups[matchIndex].photoPaths.add(file.path);
+            _case.geoGroups[matchIndex].photoPaths.add(savedPath);
             _activeGroupIndex = matchIndex;
           } else {
             _case.geoGroups.add(
               GeoPhotoGroup(
                 latitude: position.latitude,
                 longitude: position.longitude,
-                photoPaths: [file.path],
+                photoPaths: [savedPath],
               ),
             );
             _activeGroupIndex = _case.geoGroups.length - 1;
           }
         } else {
           _case.geoGroups.add(
-            GeoPhotoGroup(photoPaths: [file.path]),
+            GeoPhotoGroup(photoPaths: [savedPath]),
           );
           _activeGroupIndex = _case.geoGroups.length - 1;
           _locationError =
